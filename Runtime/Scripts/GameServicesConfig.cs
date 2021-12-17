@@ -10,12 +10,13 @@ namespace GameServices
 		Live,
 	}
 
-	[CreateAssetMenu(fileName = "GameServicesConfig", menuName = "ScriptableObjects/GameServicesConfig", order = 1)]
+	[CreateAssetMenu(fileName = "GameServicesConfig", menuName = "ScriptableObjects/GameServices/GameServicesConfig")]
 	public class GameServicesConfig : ScriptableObject
 	{
 		public ServicesEnvironment Environment;
 		public bool CanCreateLobbies;
 		public bool SendAnalyticEvents;
 		public bool SavePersistentData;
+		public int MaxPersistentDataSize = 1 * 1024 * 1024;
 	}
 }

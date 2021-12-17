@@ -1,0 +1,27 @@
+{
+    "name": "com.untitledgamestudio.gameservices",
+    "rootNamespace": "GameServices",
+    "references": [
+        "Unity.Services.Core",
+        "Unity.Services.Core.Environments",
+        "Unity.Services.Authentication",
+        "Unity.Services.Analytics",
+        "Unity.Services.CloudSave",
+        "Unity.Services.Lobbies",
+        "Unity.Services.Relay",
+        "Unity.Services.CloudCode",
+        "Unity.Netcode.Runtime",
+        "Unity.Netcode.Adapter.UTP",
+        "Unity.RemoteConfig",
+        "Unity.Services.Economy"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

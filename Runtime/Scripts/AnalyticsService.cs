@@ -7,19 +7,12 @@ namespace GameServices
 	{
 		public void Flush()
 		{
-			if (State == State.Initialized)
-			{
-				Events.Flush();
-			}
+			Events.Flush();
 		}
 
 		public void SendEvent(string name, IDictionary<string, object> data)
 		{
-			if (State == State.Initialized)
-			{
-				Events.CustomData(name, data);
-			}
+			Events.CustomData(name, data);
 		}
 	}
-
 }
