@@ -12,7 +12,7 @@
         "Unity.Services.CloudCode",
         "Unity.Netcode.Runtime",
         "Unity.Netcode.Adapter.UTP",
-        "Unity.RemoteConfig",
+        "Unity.Services.RemoteConfig",
         "Unity.Services.Economy"
     ],
     "includePlatforms": [],
