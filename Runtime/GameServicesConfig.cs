@@ -10,7 +10,7 @@ namespace GameServices
 		Live,
 	}
 
-	[CreateAssetMenu(fileName = "GameServicesConfig", menuName = "ScriptableObjects/GameServices/GameServicesConfig")]
+	[CreateAssetMenu(fileName = "GameServicesConfig", menuName = "GameServices/GameServicesConfig")]
 	public class GameServicesConfig : ScriptableObject
 	{
 		public ServicesEnvironment Environment;

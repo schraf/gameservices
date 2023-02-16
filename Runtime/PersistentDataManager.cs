@@ -18,7 +18,10 @@ namespace GameServices
 
 		public async Task Load(IPersistentData data)
 		{
-			Dictionary<string, string> savedData = await SaveData.LoadAllAsync();
+			ICloudSaveService service = CloudSaveService.Instance;
+			ICloudSaveDataClient dataClient = service.Data;
+
+			Dictionary<string, string> savedData = await dataClient.LoadAllAsync();
 
 			if (savedData.ContainsKey(Key))
 			{
@@ -48,7 +51,11 @@ namespace GameServices
 				byte[] bytes = memoryStream.GetBuffer();
 				Dictionary<string, object> dataToSave = new Dictionary<string, object>(1);
 				dataToSave[Key] = Convert.ToBase64String(bytes, 0, (int)memoryStream.Position);
-				await SaveData.ForceSaveAsync(dataToSave);
+
+				ICloudSaveService service = CloudSaveService.Instance;
+				ICloudSaveDataClient dataClient = service.Data;
+
+				await dataClient.ForceSaveAsync(dataToSave);
 			}
 		}
 	}

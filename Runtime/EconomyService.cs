@@ -8,6 +8,7 @@ namespace GameServices
 {
 	public class EconomyService : GameService
 	{
+		/*
 		public class PlayerInventory
 		{
 			public Dictionary<string, PlayerBalance> Currencies = new Dictionary<string, PlayerBalance>();
@@ -204,5 +205,6 @@ namespace GameServices
 			
 			return true;
 		}
+		*/
 	}
 }

@@ -10,10 +10,9 @@
         "Unity.Services.Lobbies",
         "Unity.Services.Relay",
         "Unity.Services.CloudCode",
-        "Unity.Netcode.Runtime",
-        "Unity.Netcode.Adapter.UTP",
         "Unity.Services.RemoteConfig",
-        "Unity.Services.Economy"
+        "Unity.Services.Economy",
+        "Unity.Networking.Transport"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

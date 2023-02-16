@@ -1,7 +1,9 @@
 using UnityEngine;
+using Unity.Jobs;
+using Unity.Collections;
+using Unity.Networking.Transport;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
-using Unity.Netcode;
 using System;
 using System.Threading.Tasks;
 
@@ -9,41 +11,48 @@ namespace GameServices
 {
 	public class RelayService : GameService
 	{
-		UnityTransport Transport;
+		private NetworkDriver Driver;
+		private NativeList<NetworkConnection> Connections;
+		private JobHandle ServerJobHandle;
 
-		protected override Task<bool> TryInitialize()
+		protected virtual Task<bool> TryShutdown()
 		{
-			Transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-			return Task.FromResult(Transport != null);
+			ShutdownDriver();
+			return Task.FromResult(true);
 		}
 
-		protected override Task<bool> TryShutdown()
+		private Task ShutdownDriver()
 		{
-			Transport = null;
-			return Task.FromResult(true);
+			if (Driver.IsCreated)
+			{
+				ServerJobHandle.Complete();
+				Connections.Dispose();
+				Driver.Dispose();
+			}
 		}
 
 		public async Task<string> CreateServer(int maxConnections)
 		{
 			string joinCode = null;
 
+			ShutdownDriver();
+
 			try
 			{
-				Allocation allocation = await Relay.Instance.CreateAllocationAsync(maxConnections, null);
-				joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
+				Connections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
+        		Driver = NetworkDriver.Create();
 
+				IRelayService service = Unity.Services.Relay.RelayService.Instance;
+				Allocation allocation = await service.CreateAllocationAsync(maxConnections, null);
+				joinCode = await service.GetJoinCodeAsync(allocation.AllocationId);
+/*
 				Transport.SetRelayServerData(
 					allocation.RelayServer.IpV4, 
 					(ushort)allocation.RelayServer.Port, 
 					allocation.AllocationIdBytes, 
 					allocation.Key, 
 					allocation.ConnectionData);
-
-				if (!NetworkManager.Singleton.StartHost())
-				{
-					Debug.LogWarning($"Failed to host server on relay {allocation.RelayServer.IpV4}:${allocation.RelayServer.Port}");
-					joinCode = null;
-				}
+*/
 			}
 			catch (Exception ex)
 			{
@@ -57,8 +66,9 @@ namespace GameServices
 		{
 			try
 			{
-				JoinAllocation allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
-
+				IRelayService service = Unity.Services.Relay.RelayService.Instance;
+				JoinAllocation allocation = await service.JoinAllocationAsync(joinCode);
+/*
 				Transport.SetRelayServerData(
 					allocation.RelayServer.IpV4, 
 					(ushort)allocation.RelayServer.Port, 
@@ -66,8 +76,8 @@ namespace GameServices
 					allocation.Key, 
 					allocation.ConnectionData, 
 					allocation.HostConnectionData);
-
-				return NetworkManager.Singleton.StartClient();
+*/
+				return true;
 			}
 			catch (Exception ex)
 			{

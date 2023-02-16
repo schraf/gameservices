@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GameServices
 {
-	[CreateAssetMenu(fileName = "LobbyConfig", menuName = "ScriptableObjects/GameServices/LobbyConfig")]
+	[CreateAssetMenu(fileName = "LobbyConfig", menuName = "GameServices/LobbyConfig")]
 	public class LobbyConfig : ScriptableObject
 	{
 		public string Type;

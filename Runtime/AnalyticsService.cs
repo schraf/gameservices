@@ -7,12 +7,14 @@ namespace GameServices
 	{
 		public void Flush()
 		{
-			Events.Flush();
+			IAnalyticsService service = Unity.Services.Analytics.AnalyticsService.Instance;
+			service.Flush();
 		}
 
 		public void SendEvent(string name, IDictionary<string, object> data)
 		{
-			Events.CustomData(name, data);
+			IAnalyticsService service = Unity.Services.Analytics.AnalyticsService.Instance;
+			service.CustomData(name, data);
 		}
 	}
 }
