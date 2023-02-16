@@ -12,7 +12,9 @@
         "Unity.Services.CloudCode",
         "Unity.Services.RemoteConfig",
         "Unity.Services.Economy",
-        "Unity.Networking.Transport"
+        "Unity.Networking.Transport",
+        "Unity.Burst",
+        "Unity.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

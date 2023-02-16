@@ -1,7 +1,6 @@
 using UnityEngine;
-using Unity.Jobs;
-using Unity.Collections;
 using Unity.Networking.Transport;
+using Unity.Networking.Transport.Relay;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using System;
@@ -11,80 +10,43 @@ namespace GameServices
 {
 	public class RelayService : GameService
 	{
-		private NetworkDriver Driver;
-		private NativeList<NetworkConnection> Connections;
-		private JobHandle ServerJobHandle;
-
-		protected virtual Task<bool> TryShutdown()
+		public struct TaskResult
 		{
-			ShutdownDriver();
-			return Task.FromResult(true);
+			public NetworkDriver driver;
+			public string joinCode;
 		}
 
-		private Task ShutdownDriver()
+		public async Task<TaskResult> CreateServer(int maxConnections)
 		{
-			if (Driver.IsCreated)
-			{
-				ServerJobHandle.Complete();
-				Connections.Dispose();
-				Driver.Dispose();
-			}
+			TaskResult result = new TaskResult();
+
+			IRelayService service = Unity.Services.Relay.RelayService.Instance;
+			Allocation allocation = await service.CreateAllocationAsync(maxConnections, null);
+
+			RelayServerData serverData = new RelayServerData(allocation, "udp");
+			NetworkSettings settings = new NetworkSettings();
+			settings.WithRelayParameters(ref serverData);
+
+			result.driver = NetworkDriver.Create(settings);
+			result.joinCode = await service.GetJoinCodeAsync(allocation.AllocationId);
+
+			return result;
 		}
 
-		public async Task<string> CreateServer(int maxConnections)
+		public async Task<TaskResult> JoinServer(string joinCode)
 		{
-			string joinCode = null;
+			TaskResult result = new TaskResult();
 
-			ShutdownDriver();
+			IRelayService service = Unity.Services.Relay.RelayService.Instance;
+			JoinAllocation allocation = await service.JoinAllocationAsync(joinCode);
+			RelayServerData serverData = new RelayServerData(allocation, "udp");
+			NetworkSettings settings = new NetworkSettings();
+			settings.WithRelayParameters(ref serverData);
 
-			try
-			{
-				Connections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
-        		Driver = NetworkDriver.Create();
+			result.driver = NetworkDriver.Create(settings);
+			result.joinCode = joinCode;
 
-				IRelayService service = Unity.Services.Relay.RelayService.Instance;
-				Allocation allocation = await service.CreateAllocationAsync(maxConnections, null);
-				joinCode = await service.GetJoinCodeAsync(allocation.AllocationId);
-/*
-				Transport.SetRelayServerData(
-					allocation.RelayServer.IpV4, 
-					(ushort)allocation.RelayServer.Port, 
-					allocation.AllocationIdBytes, 
-					allocation.Key, 
-					allocation.ConnectionData);
-*/
-			}
-			catch (Exception ex)
-			{
-				Debug.LogException(ex);
-			}
-
-			return joinCode;
-		}
-
-		public async Task<bool> JoinServer(string joinCode)
-		{
-			try
-			{
-				IRelayService service = Unity.Services.Relay.RelayService.Instance;
-				JoinAllocation allocation = await service.JoinAllocationAsync(joinCode);
-/*
-				Transport.SetRelayServerData(
-					allocation.RelayServer.IpV4, 
-					(ushort)allocation.RelayServer.Port, 
-					allocation.AllocationIdBytes, 
-					allocation.Key, 
-					allocation.ConnectionData, 
-					allocation.HostConnectionData);
-*/
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Debug.LogException(ex);
-			}
-
-			return false;
+			return result;
 		}
 	}
 }
