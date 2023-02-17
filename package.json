@@ -1,6 +1,6 @@
 {
     "name": "com.untitledgamestudio.gameservices",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "displayName": "Game Services",
     "description": "Wrapper around Unity Game Services",
     "dependencies": {
