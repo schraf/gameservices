@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using System;
@@ -12,8 +13,8 @@ namespace GameServices
 
 		public GameServicesConfig Config;
 		
-		public event EventHandler InitializedEvent;
-		public event EventHandler ShutdownEvent;
+		public UnityEvent InitializedEvent;
+		public UnityEvent ShutdownEvent;
 
 		public AuthenticationService Auth { get; private set; } = new AuthenticationService();
 		public AnalyticsService Analytics { get; private set; } = new AnalyticsService();
@@ -31,7 +32,7 @@ namespace GameServices
 
 			Instance = this;
 
-			Debug.Log("Initializing Game Services");
+			Log.Debug("Initializing Game Services");
 
 			if (UnityServices.State == ServicesInitializationState.Uninitialized)
 			{
@@ -43,7 +44,7 @@ namespace GameServices
 
 			await Auth.Initialize(Config);
 
-			Debug.Log($"Authenticated Game Services PlayerId({Auth.AccountId})");
+			Log.Debug($"Authenticated Game Services PlayerId({Auth.AccountId})");
 
 			await Task.WhenAll(new[] {
 				Analytics.Initialize(Config),
@@ -55,13 +56,13 @@ namespace GameServices
 				Economy.Initialize(Config)
 			});
 
-			Debug.Log("Game Services Initialized");
+			Log.Debug("Game Services Initialized");
 			OnInitialized();
 		}
 
 		private async void OnDestroy()
 		{
-			Debug.Log("Shutting down Game Services");
+			Log.Debug("Shutting down Game Services");
 
 			await Task.WhenAll(new[] {
 				Analytics.Shutdown(),
@@ -76,27 +77,23 @@ namespace GameServices
 			await Auth.Shutdown();
 			Instance = null;
 
-			Debug.Log("Shutdown Game Services");
+			Log.Debug("Shutdown Game Services");
 			OnShutdown();
 		}
 
 		private void OnInitialized()
 		{
-			EventHandler handler = InitializedEvent;
-
-			if (handler != null)
+			if (InitializedEvent != null)
 			{
-				handler(this, EventArgs.Empty);
+				InitializedEvent.Invoke();
 			}
 		}
 
 		private void OnShutdown()
 		{
-			EventHandler handler = ShutdownEvent;
-
-			if (handler != null)
+			if (ShutdownEvent != null)
 			{
-				handler(this, EventArgs.Empty);
+				ShutdownEvent.Invoke();
 			}
 		}
 	}

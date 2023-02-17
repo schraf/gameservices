@@ -12,8 +12,8 @@ namespace GameServices
 	{
 		public struct TaskResult
 		{
-			public NetworkDriver driver;
-			public string joinCode;
+			public NetworkDriver Driver;
+			public string JoinCode;
 		}
 
 		public async Task<TaskResult> CreateServer(int maxConnections)
@@ -23,12 +23,22 @@ namespace GameServices
 			IRelayService service = Unity.Services.Relay.RelayService.Instance;
 			Allocation allocation = await service.CreateAllocationAsync(maxConnections, null);
 
+			Log.Debug($"RelayService: allocation guid {allocation.AllocationId}");
+			Log.Debug($"RelayService: region {allocation.Region}");
+
+			foreach (RelayServerEndpoint endpoint in allocation.ServerEndpoints)
+			{
+				Log.Debug($"RelayService: endpoint {endpoint.Host}:{endpoint.Port}::{endpoint.ConnectionType}");
+			}
+
 			RelayServerData serverData = new RelayServerData(allocation, "udp");
 			NetworkSettings settings = new NetworkSettings();
 			settings.WithRelayParameters(ref serverData);
 
-			result.driver = NetworkDriver.Create(settings);
-			result.joinCode = await service.GetJoinCodeAsync(allocation.AllocationId);
+			result.Driver = NetworkDriver.Create(settings);
+			result.JoinCode = await service.GetJoinCodeAsync(allocation.AllocationId);
+
+			Log.Debug($"RelayService: join code {result.JoinCode}");
 
 			return result;
 		}
@@ -43,8 +53,8 @@ namespace GameServices
 			NetworkSettings settings = new NetworkSettings();
 			settings.WithRelayParameters(ref serverData);
 
-			result.driver = NetworkDriver.Create(settings);
-			result.joinCode = joinCode;
+			result.Driver = NetworkDriver.Create(settings);
+			result.JoinCode = joinCode;
 
 			return result;
 		}
