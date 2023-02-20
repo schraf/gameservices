@@ -126,6 +126,30 @@ namespace GameServices
 			return false;
 		}
 
+		public bool GetLobbyData(string code, string key, out string value)
+		{
+			Lobby lobby = null;
+			
+			if (LobbyMap.TryGetValue(code, out lobby))
+			{
+				DataObject data;
+				
+				if (lobby.Data.TryGetValue(key, out data))
+				{
+					value = data.Value;
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
+		}
+
+		public bool GetLobbyConnectionInfo(string code, out string connectionInfo)
+		{
+			return GetLobbyData(code, "connectionInfo", out connectionInfo);
+		}
+
 		protected async override Task<bool> TryShutdown()
 		{
 			foreach (KeyValuePair<string, Lobby> kvp in LobbyMap)
