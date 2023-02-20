@@ -22,7 +22,7 @@ namespace GameServices
 		public EconomyService Economy { get; private set; } = new EconomyService();
 		public LobbyService Lobby { get; private set; } = new LobbyService();
 		public PersistentDataService PersistentData { get; private set; } = new PersistentDataService();
-		public RelayService Relay { get; private set; } = new RelayService();
+		public NetworkRelayService Relay { get; private set; } = new NetworkRelayService();
 		public RemoteConfigService RemoteConfig { get; private set; } = new RemoteConfigService();
 
 		private async void Start()

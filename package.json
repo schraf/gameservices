@@ -1,10 +1,9 @@
 {
     "name": "com.untitledgamestudio.gameservices",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "displayName": "Game Services",
     "description": "Wrapper around Unity Game Services",
     "dependencies": {
-        "com.unity.transport": "1.3.1",
         "com.unity.services.analytics": "4.3.0",
         "com.unity.services.authentication": "2.4.0",
         "com.unity.services.cloudcode": "2.2.4",
