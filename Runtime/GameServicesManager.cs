@@ -25,13 +25,16 @@ namespace GameServices
 		public NetworkRelayService Relay { get; private set; } = new NetworkRelayService();
 		public RemoteConfigService RemoteConfig { get; private set; } = new RemoteConfigService();
 
-		private async void Start()
+		private void Awake()
 		{
 			if (Instance != null)
 				throw new Exception("Multiple GameServiceManager Instances");
 
 			Instance = this;
+		}
 
+		private async void Start()
+		{
 			Log.Debug("Initializing Game Services");
 
 			if (UnityServices.State == ServicesInitializationState.Uninitialized)
